@@ -1,0 +1,13 @@
+Feature,Implementation Complexity,Development Time (Days),Key Technologies,Estimated Cost ($)
+Real-time Text Messaging,Medium,5,"WebSocket, Firebase",500
+Video Calling (1-on-1),High,10,"WebRTC, STUN/TURN",2000
+Voice Calling,High,8,"WebRTC, Audio APIs",1500
+Group Video Calls,Very High,15,"WebRTC, Signaling Server",3500
+Screen Sharing,High,12,Screen Capture APIs,2500
+File Sharing,Medium,6,File Upload APIs,800
+Push Notifications,Medium,4,"FCM, Local Notifications",600
+User Authentication,Low,3,"Firebase Auth, JWT",400
+Dark/Light Theme,Low,2,Flutter ThemeData,200
+Message History,Medium,4,"SQLite, Hive",600
+Call Recording,Very High,20,MediaRecorder APIs,4000
+End-to-End Encryption,Very High,25,Cryptographic Libraries,5000

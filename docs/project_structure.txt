@@ -1,0 +1,71 @@
+
+Flutter Real-Time Communication App - Project Structure
+========================================================
+
+lib/
+├── main.dart                          # App entry point and setup
+├── theme/
+│   └── app_theme.dart                 # Discord-inspired theme configuration
+├── screens/
+│   ├── home_screen.dart              # Main navigation screen
+│   ├── chat_screen.dart              # Real-time messaging interface
+│   ├── video_call_screen.dart        # Video calling interface
+│   ├── voice_call_screen.dart        # Voice calling interface
+│   └── settings_screen.dart          # App configuration
+├── widgets/
+│   ├── chat/
+│   │   ├── message_bubble.dart       # Individual message display
+│   │   ├── message_input.dart        # Text input with send button
+│   │   └── chat_list.dart            # Scrollable message list
+│   ├── call/
+│   │   ├── video_view.dart           # Video stream display
+│   │   ├── call_controls.dart        # Mute, video toggle, hang up
+│   │   ├── participant_tile.dart     # Individual participant view
+│   │   └── screen_share_view.dart    # Screen sharing display
+│   └── common/
+│       ├── loading_indicator.dart    # Custom loading animations
+│       ├── error_dialog.dart         # Error handling UI
+│       └── custom_button.dart        # Themed buttons
+├── services/
+│   ├── webrtc_service.dart          # WebRTC peer connection management
+│   ├── messaging_service.dart        # Real-time messaging via WebSocket
+│   ├── signaling_service.dart        # WebRTC signaling server communication
+│   ├── auth_service.dart            # User authentication
+│   └── storage_service.dart         # Local data persistence
+├── blocs/
+│   ├── call_bloc.dart               # Call state management
+│   ├── chat_bloc.dart               # Chat state management
+│   └── auth_bloc.dart               # Authentication state
+├── models/
+│   ├── user.dart                    # User data model
+│   ├── message.dart                 # Message data model
+│   ├── call.dart                    # Call session data model
+│   └── room.dart                    # Chat room data model
+├── repositories/
+│   ├── user_repository.dart         # User data access layer
+│   ├── message_repository.dart      # Message data access layer
+│   └── call_repository.dart         # Call data access layer
+└── utils/
+    ├── constants.dart               # App constants and configuration
+    ├── helpers.dart                # Utility functions
+    └── extensions.dart             # Dart extensions
+
+android/
+├── app/
+│   └── src/main/AndroidManifest.xml  # Android permissions
+└── gradle files                     # Build configuration
+
+ios/
+├── Runner/
+│   └── Info.plist                   # iOS permissions and configuration
+└── Podfile                          # iOS dependencies
+
+Key Implementation Notes:
+- Uses BLoC pattern for state management
+- WebRTC for peer-to-peer communication
+- WebSocket for real-time messaging
+- Provider for dependency injection
+- Dark theme inspired by Discord
+- Modular architecture for scalability
+- Comprehensive error handling
+- Performance optimizations for real-time features

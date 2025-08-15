@@ -1,0 +1,194 @@
+
+import 'package:flutter/material.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+
+class WebRTCService extends ChangeNotifier {
+  static final WebRTCService _instance = WebRTCService._internal();
+  static WebRTCService get instance => _instance;
+  WebRTCService._internal();
+
+  RTCPeerConnection? _peerConnection;
+  MediaStream? _localStream;
+  MediaStream? _remoteStream;
+  WebSocketChannel? _signaling;
+
+  final RTCVideoRenderer localRenderer = RTCVideoRenderer();
+  final RTCVideoRenderer remoteRenderer = RTCVideoRenderer();
+
+  bool _isConnected = false;
+  bool _isMuted = false;
+  bool _isVideoEnabled = true;
+  bool _isScreenSharing = false;
+
+  // Getters
+  bool get isConnected => _isConnected;
+  bool get isMuted => _isMuted;
+  bool get isVideoEnabled => _isVideoEnabled;
+  bool get isScreenSharing => _isScreenSharing;
+  MediaStream? get localStream => _localStream;
+  MediaStream? get remoteStream => _remoteStream;
+
+  Future<void> initialize() async {
+    await localRenderer.initialize();
+    await remoteRenderer.initialize();
+  }
+
+  Future<void> createPeerConnection() async {
+    final configuration = <String, dynamic>{
+      'iceServers': [
+        {'urls': 'stun:stun.l.google.com:19302'},
+        {
+          'urls': 'turn:your-turn-server.com:3478',
+          'username': 'username',
+          'credential': 'password'
+        }
+      ]
+    };
+
+    _peerConnection = await createPeerConnection(configuration);
+
+    _peerConnection!.onIceCandidate = (RTCIceCandidate candidate) {
+      _sendSignalingMessage({
+        'type': 'candidate',
+        'candidate': candidate.toMap(),
+      });
+    };
+
+    _peerConnection!.onTrack = (RTCTrackEvent event) {
+      if (event.streams.isNotEmpty) {
+        _remoteStream = event.streams.first;
+        remoteRenderer.srcObject = _remoteStream;
+        notifyListeners();
+      }
+    };
+
+    _peerConnection!.onConnectionState = (RTCPeerConnectionState state) {
+      _isConnected = state == RTCPeerConnectionState.RTCPeerConnectionStateConnected;
+      notifyListeners();
+    };
+  }
+
+  Future<void> startLocalStream({bool video = true, bool audio = true}) async {
+    final Map<String, dynamic> constraints = {
+      'audio': audio,
+      'video': video ? {'facingMode': 'user'} : false,
+    };
+
+    _localStream = await navigator.mediaDevices.getUserMedia(constraints);
+    localRenderer.srcObject = _localStream;
+
+    if (_peerConnection != null) {
+      _localStream!.getTracks().forEach((track) {
+        _peerConnection!.addTrack(track, _localStream!);
+      });
+    }
+
+    _isVideoEnabled = video;
+    notifyListeners();
+  }
+
+  Future<void> createOffer() async {
+    if (_peerConnection == null) await createPeerConnection();
+
+    RTCSessionDescription offer = await _peerConnection!.createOffer();
+    await _peerConnection!.setLocalDescription(offer);
+
+    _sendSignalingMessage({
+      'type': 'offer',
+      'sdp': offer.toMap(),
+    });
+  }
+
+  Future<void> createAnswer(Map<String, dynamic> offer) async {
+    if (_peerConnection == null) await createPeerConnection();
+
+    await _peerConnection!.setRemoteDescription(
+      RTCSessionDescription(offer['sdp'], offer['type'])
+    );
+
+    RTCSessionDescription answer = await _peerConnection!.createAnswer();
+    await _peerConnection!.setLocalDescription(answer);
+
+    _sendSignalingMessage({
+      'type': 'answer',
+      'sdp': answer.toMap(),
+    });
+  }
+
+  Future<void> toggleMute() async {
+    if (_localStream != null) {
+      _isMuted = !_isMuted;
+      _localStream!.getAudioTracks().forEach((track) {
+        track.enabled = !_isMuted;
+      });
+      notifyListeners();
+    }
+  }
+
+  Future<void> toggleVideo() async {
+    if (_localStream != null) {
+      _isVideoEnabled = !_isVideoEnabled;
+      _localStream!.getVideoTracks().forEach((track) {
+        track.enabled = _isVideoEnabled;
+      });
+      notifyListeners();
+    }
+  }
+
+  Future<void> enableScreenShare() async {
+    if (_isScreenSharing) return;
+
+    final stream = await navigator.mediaDevices.getDisplayMedia({
+      'video': true,
+      'audio': true,
+    });
+
+    final videoTrack = stream.getVideoTracks().first;
+    final sender = _peerConnection!.getSenders().firstWhere(
+      (sender) => sender.track?.kind == 'video'
+    );
+
+    await sender.replaceTrack(videoTrack);
+    _isScreenSharing = true;
+    notifyListeners();
+  }
+
+  Future<void> disableScreenShare() async {
+    if (!_isScreenSharing) return;
+
+    await startLocalStream(video: _isVideoEnabled, audio: !_isMuted);
+    _isScreenSharing = false;
+  }
+
+  void _sendSignalingMessage(Map<String, dynamic> message) {
+    if (_signaling != null) {
+      _signaling!.sink.add(json.encode(message));
+    }
+  }
+
+  Future<void> hangUp() async {
+    _localStream?.dispose();
+    _remoteStream?.dispose();
+    await _peerConnection?.close();
+
+    _localStream = null;
+    _remoteStream = null;
+    _peerConnection = null;
+    _isConnected = false;
+    _isScreenSharing = false;
+
+    localRenderer.srcObject = null;
+    remoteRenderer.srcObject = null;
+
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    hangUp();
+    localRenderer.dispose();
+    remoteRenderer.dispose();
+    super.dispose();
+  }
+}
