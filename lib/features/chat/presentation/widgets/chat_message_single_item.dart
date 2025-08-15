@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:customer_service/res/assets_res.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -38,7 +39,7 @@ class ChatMessageSingleItem extends StatelessWidget {
                   width: 35,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: Image.asset("assets/icon/icon.png"),
+                    child: Image.asset(AssetsRes.appLogo),
                   ),
                 ),
                 SizedBox(width: 20),
@@ -75,7 +76,12 @@ class ChatMessageSingleItem extends StatelessWidget {
                   SizedBox(width: 10),
                   InkWell(
                     onTap: () {
-                      Share.share(chatMessage.promptResponse!);
+                      SharePlus.instance.share(
+                        ShareParams(
+                          title: "Share",
+                          text: chatMessage.promptResponse ?? "",
+                        ),
+                      );
                     },
                     child: Icon(Icons.share, size: 18),
                   ),

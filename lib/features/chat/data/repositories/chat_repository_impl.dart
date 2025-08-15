@@ -11,5 +11,6 @@ class ChatRepositoryImpl implements ChatRepository {
   Future<ChatConversationEntity> chatConversation(
     String prompt,
     Function(bool isReqComplete) onCompleteReqProcessing,
-  ) async => remoteDataSource.chatConversation(prompt, onCompleteReqProcessing);
+  ) async =>
+      remoteDataSource.chatConversation(prompt, onCompleteReqProcessing);
 }

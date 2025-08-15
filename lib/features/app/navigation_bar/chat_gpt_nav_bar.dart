@@ -1,3 +1,4 @@
+import 'package:customer_service/res/assets_res.dart';
 import 'package:flutter/material.dart';
 import 'package:customer_service/features/app/navigation_bar/nav_button.dart';
 import 'package:customer_service/features/global/theme/style.dart';
@@ -14,7 +15,7 @@ class ChatGptNavBar extends StatelessWidget {
         children: [
           SizedBox(
             height: 70,
-            child: Image.asset("assets/icon/icon.png", color: colorPink),
+            child: Image.asset(AssetsRes.appLogo),
           ),
           Row(
             children: [

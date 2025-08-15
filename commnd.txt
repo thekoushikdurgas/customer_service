@@ -934,10 +934,11 @@ source venv/bin/activate
 pip install -r wanderai/requirements/development.txt
 
 
+dir /s /b lib\*.dart | sort > tree.dart.txt
 dart format .
-flutter analyze .
+flutter analyze . > analysis.txt 
 
-dir /s /b wanderai-backend\*.py | sort
+
 dir /s /b wanderai-frontend\lib\*.dart | sort
 
 cd wanderlustai

@@ -1,0 +1,5 @@
+Analyzing customer_service...                                   
+
+   info - 'Share' is deprecated and shouldn't be used. Use SharePlus instead - lib\features\chat\presentation\widgets\chat_message_single_item.dart:79:23 - deprecated_member_use
+   info - 'share' is deprecated and shouldn't be used. Use SharePlus.instance.share() instead - lib\features\chat\presentation\widgets\chat_message_single_item.dart:79:29 - deprecated_member_use
+
