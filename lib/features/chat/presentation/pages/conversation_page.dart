@@ -208,7 +208,7 @@ class _ConversationPageState extends State<ConversationPage> {
     return SizedBox(
       height: 60,
       child: Lottie.asset(
-        AssetsRes.LOADING_ANIMATION,
+        AssetsRes.loadingAnimation,
         height: 60,
         width: 60,
         fit: BoxFit.contain,

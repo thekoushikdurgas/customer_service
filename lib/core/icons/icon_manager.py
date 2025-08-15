@@ -4,6 +4,8 @@ Icon Manager for prbal_icons.dart
 This script provides utilities to manage and analyze icons in the Dart icon file.
 """
 
+import lib.transport
+import lib.session
 import re
 import os
 from typing import List, Dict, Tuple, Set

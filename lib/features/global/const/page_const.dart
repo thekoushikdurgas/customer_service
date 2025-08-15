@@ -1,6 +1,3 @@
-
-
-
-class PageConst{
-  static const String conversationPage="conversationPage";
+class PageConst {
+  static const String conversationPage = "conversationPage";
 }

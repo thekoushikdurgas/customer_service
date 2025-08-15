@@ -51,7 +51,7 @@ class CustomTextField extends StatelessWidget {
                           ? SizedBox(
                               height: 40,
                               child: Lottie.asset(
-                                AssetsRes.LOADING_ANIMATION,
+                                AssetsRes.loadingAnimation,
                                 height: 40,
                                 width: 40,
                                 fit: BoxFit.contain,
